@@ -26,7 +26,8 @@ To set up a Grafana datasource, you need to follow the procedure [here](https://
 
 ***The dashboards are inspired by the work of [jorgedelacruz](https://www.jorgedelacruz.es/).***
 
+# Module Housing
+[Templates](dashboards/housing)
 
-
-
-
+# Housing Overview
+![](images/grafana_dashboards_housing.png)
