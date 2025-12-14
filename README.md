@@ -1,7 +1,7 @@
 # console-grafana-iaas
 Dashboard Grafana compatible with the GraphQL API of the Cloud Temple Console.
 
-To set up a Grafana datasource, you need to follow the procedure [here](https://docs.cloud-temple.com/console/howto.en/#configuring-the-metrics-module-as-a-data-source-in-grafana)
+To set up a Grafana datasource, you need to follow the procedure [here](https://docs.cloud-temple.com/en/console/metrics/concepts#usage-with-grafana)
 
 # Module IaaS
 [Templates](dashboards/iaas)
@@ -25,6 +25,23 @@ To set up a Grafana datasource, you need to follow the procedure [here](https://
 ![](images/grafana_dashboards_iaas_vms_health.png)
 
 ***The dashboards are inspired by the work of [jorgedelacruz](https://www.jorgedelacruz.es/).***
+
+# OpenIaaS
+
+## OpenIaaS - Backup Monitoring
+[Template](dashboards/iaas/openiaas-backup.json)
+
+## OpenIaaS - XOA & XCP Infrastructure
+[Template](dashboards/iaas/openiaas-infra.json)
+![](images/grafana_dashbaord_openiaas-infra.png)
+
+## OpenIaaS - Virtual Machines Monitoring - Global
+[Template](dashboards/iaas/openiaas-vms-global.json)
+![](images/grafana_dashbaord_openiaas_vms-global.png)
+
+## OpenIaaS - VMs lists
+[Template](dashboards/iaas/openiaas-vms-list.json)
+![](images/grafana_dashbaord_openiaas_vms-list.png)
 
 # Module Housing
 [Templates](dashboards/housing)
