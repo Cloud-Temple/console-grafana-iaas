@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 796,
+  "id": 790,
   "links": [],
   "panels": [
     {
@@ -29,9 +29,10 @@
         "x": 0,
         "y": 0
       },
-      "id": 1,
+      "id": 5,
       "panels": [],
-      "title": "Global KPIs",
+      "repeat": "vm_name",
+      "title": "VM Deep Dive: $vm_name",
       "type": "row"
     },
     {
@@ -44,7 +45,23 @@
           "color": {
             "mode": "thresholds"
           },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "Failed"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "Success"
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -58,84 +75,15 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 4,
         "w": 6,
         "x": 0,
         "y": 1
       },
-      "id": 2,
+      "id": 6,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.1.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "count(count by (vm_uuid) (vates_vm_backup_age_hours_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\"}))",
-          "instant": false,
-          "legendFormat": "",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Total Protected VMs",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 1
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
+        "colorMode": "background",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
@@ -159,14 +107,14 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(vates_vm_backup_last_status_gauge{status=\"failure\"})",
-          "instant": false,
-          "legendFormat": "",
-          "range": true,
+          "expr": "last_over_time(vates_vm_backup_last_status_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=\"$vm_name\"}[$__range])",
+          "instant": true,
+          "legendFormat": "Status",
+          "range": false,
           "refId": "A"
         }
       ],
-      "title": "Failed Backups",
+      "title": "Last Status",
       "type": "stat"
     },
     {
@@ -188,21 +136,26 @@
                 "value": 0
               },
               {
+                "color": "orange",
+                "value": 24
+              },
+              {
                 "color": "red",
-                "value": 1
+                "value": 48
               }
             ]
-          }
+          },
+          "unit": "h"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 4,
         "w": 6,
-        "x": 12,
+        "x": 6,
         "y": 1
       },
-      "id": 4,
+      "id": 7,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -228,14 +181,13 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "count(vates_vm_backup_age_hours_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\"} > 24)",
-          "instant": false,
-          "legendFormat": "",
-          "range": true,
+          "expr": "last_over_time(vates_vm_backup_age_hours_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=\"$vm_name\"}[$__range])",
+          "instant": true,
+          "legendFormat": "Age",
           "refId": "A"
         }
       ],
-      "title": "VMs not backed up > 24h",
+      "title": "Age",
       "type": "stat"
     },
     {
@@ -263,12 +215,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 4,
         "w": 6,
-        "x": 18,
+        "x": 12,
         "y": 1
       },
-      "id": 5,
+      "id": 8,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -294,28 +246,14 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "avg(vates_vm_backup_duration_seconds_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\"})",
-          "instant": false,
-          "legendFormat": "",
-          "range": true,
+          "expr": "last_over_time(vates_vm_backup_duration_seconds_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=\"$vm_name\"}[$__range])",
+          "instant": true,
+          "legendFormat": "Duration",
           "refId": "A"
         }
       ],
-      "title": "Average Backup Duration",
+      "title": "Last Duration",
       "type": "stat"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 9
-      },
-      "id": 6,
-      "panels": [],
-      "title": "Backup Status Details",
-      "type": "row"
     },
     {
       "datasource": {
@@ -324,12 +262,106 @@
       },
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "last_over_time(vates_vm_backup_size_bytes_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=\"$vm_name\"}[$__range])",
+          "instant": true,
+          "legendFormat": "Size",
+          "refId": "A"
+        }
+      ],
+      "title": "Last Size",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "inspect": false
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -344,181 +376,145 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Status"
-            },
-            "properties": [
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "failure": {
-                        "color": "red",
-                        "index": 0,
-                        "text": "Failure"
-                      },
-                      "pending": {
-                        "color": "orange",
-                        "index": 2,
-                        "text": "Pending"
-                      },
-                      "success": {
-                        "color": "green",
-                        "index": 1,
-                        "text": "Success"
-                      }
-                    },
-                    "type": "value"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Size"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "bytes"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Duration (min)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "m"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "VM Name"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 258
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 16,
-        "w": 24,
+        "h": 8,
+        "w": 12,
         "x": 0,
-        "y": 10
+        "y": 5
       },
-      "id": 7,
+      "id": 10,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "frameIndex": 0,
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "Status"
-          }
-        ]
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "12.1.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "editorMode": "code",
-          "expr": "avg by (vm_name, status) (vates_vm_backup_last_status_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=~\"$vm_name\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "refId": "STATUS"
-        },
-        {
-          "editorMode": "code",
-          "expr": "avg by (vm_name, status) (vates_vm_backup_age_hours_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=~\"$vm_name\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "refId": "AGE"
-        },
-        {
-          "editorMode": "code",
-          "expr": "avg by (vm_name, status) (vates_vm_backup_duration_seconds_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=~\"$vm_name\"}[$__range]) / 60 ",
-          "format": "table",
-          "instant": true,
-          "refId": "DURATION"
-        },
-        {
-          "editorMode": "code",
-          "expr": "avg by (vm_name, status) (vates_vm_backup_size_bytes_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=~\"$vm_name\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "refId": "SIZE"
+          "expr": "vates_vm_backup_duration_seconds_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=\"$vm_name\"}",
+          "legendFormat": "Total Duration",
+          "range": true,
+          "refId": "A"
         }
       ],
-      "title": "Last Backup Status per VM",
-      "transformations": [
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Value #AGE": false,
-              "Value #STATUS": true,
-              "__name__": true,
-              "db": true,
-              "host": true,
-              "tenant_name": true,
-              "tenant_uuid": true,
-              "url": true,
-              "vm_uuid": true
+      "title": "Backup Duration History",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "includeByName": {},
-            "indexByName": {
-              "Time": 1,
-              "Value #AGE": 4,
-              "Value #DURATION": 5,
-              "Value #SIZE": 6,
-              "Value #STATUS": 3,
-              "status": 2,
-              "vm_name": 0
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
             },
-            "orderByMode": "manual",
-            "renameByName": {
-              "Value #AGE": "Age (hours)",
-              "Value #DURATION": "Duration (min)",
-              "Value #SIZE": "Size",
-              "job_name": "SLA",
-              "status": "Status",
-              "vm_name": "VM Name"
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
-          }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 5
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "vates_vm_backup_size_bytes_gauge{tenant_name=~\"$tenant_name\", az=~\"$az\", job_name=~\"$job_name\", vm_name=\"$vm_name\"}",
+          "legendFormat": "Size",
+          "range": true,
+          "refId": "A"
         }
       ],
-      "type": "table"
+      "title": "Backup Size History",
+      "type": "timeseries"
     }
   ],
   "preload": false,
@@ -529,11 +525,9 @@
     "list": [
       {
         "current": {
-          "text": [
-            "TDEAZ"
-          ],
+          "text": "All",
           "value": [
-            "TDEAZ"
+            "$__all"
           ]
         },
         "datasource": {
@@ -606,9 +600,7 @@
       },
       {
         "current": {
-          "text": [
-            "All"
-          ],
+          "text": "All",
           "value": [
             "$__all"
           ]
@@ -651,12 +643,12 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "OpenIaaS - Backup Monitoring",
-  "uid": "backup-monitoring-dashboardv4",
-  "version": 10
+  "title": "OpenIaaS - Backup Vms",
+  "uid": "backup-pilot-dashboard",
+  "version": 12
 }
